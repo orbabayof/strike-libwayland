@@ -1,3 +1,5 @@
+#pragma once
+
 #include <array>
 #include <cstdint>
 #include <filesystem>
@@ -10,12 +12,6 @@
 #include <internal_settings.hpp>
 #include <iostream>
 #include <utility>
-
-template<typename T> 
-concept FileWritable = requires(T type)
-{
-  std::fstream{} << type;    
-};
 
 namespace sk
 {
@@ -62,7 +58,8 @@ namespace sk
     {
       namespace cp = console::paint;
       auto msg_color { cp::color_code( color_escape_code_of(severity) ) };
-      auto msg_nocolor { (std::ostringstream{} << cp::reset << std::format(fmt, std::forward<Args>(args)...) << msg_color) };
+      auto msg { std::format(fmt, std::forward<Args>(args)...) };
+      auto msg_nocolor { (std::ostringstream{} << cp::reset << msg << msg_color) };
 
       std::ostringstream location_in_file;
       location_in_file << location.file_name() << '(' << location.line() << ':' << location.column() << ')';
@@ -70,7 +67,7 @@ namespace sk
       std::ostringstream func;
       func << "<" << location.function_name() << ">: ";
 
-      std::osyncstream{ _log_file } << msg_color << func.str() << msg_nocolor.str() << ' ' << location_in_file.str() << cp::reset << '\n';
+      std::osyncstream{ _log_file } << func.str() << msg << ' ' << location_in_file.str() << '\n';
       std::osyncstream{ std::clog } << msg_color << func.str() << msg_nocolor.str() << ' ' << location_in_file.str() << cp::reset << '\n';
     }
 

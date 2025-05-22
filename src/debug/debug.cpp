@@ -1,2 +1,1 @@
-#include <debug/log.hpp>
-
+#include <debug/debug.hpp>
