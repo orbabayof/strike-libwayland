@@ -1,3 +1,4 @@
+#pragma once
 #include <wayland-server-core.h>
 #include <wayland-server.h>
 
@@ -23,7 +24,11 @@ namespace sk
     wlr_scene_output_layout* scene_output_layout;
     wlr_xdg_shell* shell;
 
+    Listener new_output_listen;
+
     const char* socket_name;
+
+    static void new_output(sk::Global* global, void* data);
 
   };
   
@@ -33,7 +38,22 @@ namespace sk
 
     Output(wlr_output* output);
 
+    void commit_state(const wlr_output_state* output_state);
+
+    void set_mode();
+    void set_screens();
+    void init_listeners();
+    void render_commit();
+
   private:
+
+    static void frame(Output* output, void* data); 
+    static void destroy(Output* output, void* data);
+    static void request_state(Output* output, void* data); 
+
+    wlr_output* _wlr;
+    Listener _frame_listener;
+    Listener _destroy_listener;
   };
 
 }

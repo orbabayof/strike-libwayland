@@ -71,6 +71,8 @@ namespace sk
       std::osyncstream{ std::clog } << msg_color << func.str() << msg_nocolor.str() << ' ' << location_in_file.str() << cp::reset << '\n';
     }
 
+    void close() { _log_file.close(); }
+
     private:
 
     std::ofstream _log_file;
@@ -114,5 +116,7 @@ namespace sk
     {
       global_log().message(location, Severity::info, fmt, std::forward<Args>(args)...);
     }
+
+    inline void global_log_close() { global_log().close(); }
   }
 }
